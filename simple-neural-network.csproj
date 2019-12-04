@@ -6,4 +6,8 @@
     <RootNamespace>simple_neural_network</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NumSharp" Version="0.20.4" />
+  </ItemGroup>
+
 </Project>
