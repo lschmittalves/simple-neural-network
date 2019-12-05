@@ -144,7 +144,7 @@ namespace simple_neural_network
         }
 
         /// <summary>
-        /// Transpose a matrix
+        /// Sum one matrix with another
         /// </summary>
         /// <returns></returns>
         public static double[,] MatrixSum(double[,] matrixa, double[,] matrixb)
@@ -166,7 +166,7 @@ namespace simple_neural_network
         }
 
         /// <summary>
-        /// Transpose a matrix
+        /// Subtract one matrix from another
         /// </summary>
         /// <returns></returns>
         public static double[,] MatrixSubstract(double[,] matrixa, double[,] matrixb)
@@ -210,7 +210,7 @@ namespace simple_neural_network
         }
 
         /// <summary>
-        /// Multiplication of a matrix
+        /// Dot Multiplication of a matrix
         /// </summary>
         /// <returns></returns>
         public static double[,] MatrixDotProduct(double[,] matrixa, double[,] matrixb)
@@ -231,7 +231,6 @@ namespace simple_neural_network
             {
                 for (int j = 0; j < colsB; j++)
                 {
-                    // the next loop looks way slow according to the profiler
                     for (int k = 0; k < rowsB; k++)
                         result[i, j] += matrixa[i, k] * matrixb[k, j];
                 }
