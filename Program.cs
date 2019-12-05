@@ -7,7 +7,6 @@ namespace simple_neural_network
     class NeuralNetWork
     {
         private Random _radomObj;
-        private double[,] _synapsesMatrix;
 
         public NeuralNetWork(int synapseMatrixColumns, int synapseMatrixLines)
         {
@@ -19,7 +18,7 @@ namespace simple_neural_network
 
         public int SynapseMatrixColumns { get; }
         public int SynapseMatrixLines { get; }
-        public double[,] SynapsesMatrix { get => _synapsesMatrix; }
+        public double[,] SynapsesMatrix { get; private set; }
 
         /// <summary>
         /// Initialize the ramdom object and the matrix of ramdon weights
@@ -36,13 +35,13 @@ namespace simple_neural_network
         /// </summary>
         private void _GenerateSynapsesMatrix()
         {
-            _synapsesMatrix = new double[SynapseMatrixLines, SynapseMatrixColumns];
+            SynapsesMatrix = new double[SynapseMatrixLines, SynapseMatrixColumns];
 
             for (var i = 0; i < SynapseMatrixLines; i++)
             {
                 for (var j = 0; j < SynapseMatrixColumns; j++)
                 {
-                    _synapsesMatrix[i, j] = (2 * _radomObj.NextDouble()) - 1;
+                    SynapsesMatrix[i, j] = (2 * _radomObj.NextDouble()) - 1;
                 }
             }
         }
@@ -50,7 +49,6 @@ namespace simple_neural_network
         /// <summary>
         /// Calculate the sigmoid of a value
         /// </summary>
-        /// <param name="value"></param>
         /// <returns></returns>
         private double[,] _CalculateSigmoid(double[,] matrix)
         {
@@ -63,7 +61,7 @@ namespace simple_neural_network
                 for (int j = 0; j < colLength; j++)
                 {
                     var value = matrix[i, j];
-                    matrix[i, j] = 1 / 1 * Math.Exp(value * -1);
+                    matrix[i, j] = 1 / (1 + Math.Exp(value * -1));
                 }
             }
             return matrix;
@@ -72,7 +70,6 @@ namespace simple_neural_network
         /// <summary>
         /// Calculate the sigmoid derivative of a value
         /// </summary>
-        /// <param name="value"></param>
         /// <returns></returns>
         private double[,] _CalculateSigmoidDerivative(double[,] matrix)
         {
@@ -93,7 +90,6 @@ namespace simple_neural_network
         /// <summary>
         /// Will return the outputs give the set of the inputs
         /// </summary>
-        /// <param name="trainInputMatrix"></param>
         public double[,] Think(double[,] inputMatrix)
         {
             var productOfTheInputsAndWeights = MatrixDotProduct(inputMatrix, SynapsesMatrix);
@@ -105,9 +101,6 @@ namespace simple_neural_network
         /// <summary>
         /// Train the neural network to achieve the output matrix values
         /// </summary>
-        /// /// <param name="trainInputMatrix"></param>
-        /// <param name="trainOutputMatrix"></param>
-        /// <param name="interactions"></param>
         public void Train(double[,] trainInputMatrix, double[,] trainOutputMatrix, int interactions)
         {
             // we run all the interactions
@@ -124,14 +117,13 @@ namespace simple_neural_network
                 // calculate the adjustment :) 
                 var adjustment = MatrixDotProduct(MatrixTranspose(trainInputMatrix), error_SigmoidDerivative);
 
-                _synapsesMatrix = MatrixSum(_synapsesMatrix, adjustment);
+                SynapsesMatrix = MatrixSum(SynapsesMatrix, adjustment);
             }
         }
 
         /// <summary>
         /// Transpose a matrix
         /// </summary>
-        /// <param name="matrix"></param>
         /// <returns></returns>
         public static double[,] MatrixTranspose(double[,] matrix)
         {
@@ -154,7 +146,6 @@ namespace simple_neural_network
         /// <summary>
         /// Transpose a matrix
         /// </summary>
-        /// <param name="matrix"></param>
         /// <returns></returns>
         public static double[,] MatrixSum(double[,] matrixa, double[,] matrixb)
         {
@@ -177,7 +168,6 @@ namespace simple_neural_network
         /// <summary>
         /// Transpose a matrix
         /// </summary>
-        /// <param name="matrix"></param>
         /// <returns></returns>
         public static double[,] MatrixSubstract(double[,] matrixa, double[,] matrixb)
         {
@@ -200,7 +190,6 @@ namespace simple_neural_network
         /// <summary>
         /// Multiplication of a matrix
         /// </summary>
-        /// <param name="matrix"></param>
         /// <returns></returns>
         public static double[,] MatrixProduct(double[,] matrixa, double[,] matrixb)
         {
@@ -223,7 +212,6 @@ namespace simple_neural_network
         /// <summary>
         /// Multiplication of a matrix
         /// </summary>
-        /// <param name="matrix"></param>
         /// <returns></returns>
         public static double[,] MatrixDotProduct(double[,] matrixa, double[,] matrixb)
         {
@@ -281,7 +269,7 @@ namespace simple_neural_network
             var trainingInputs = new double[,] { { 0, 0, 1 }, { 1, 1, 1 }, { 1, 0, 1 }, { 0, 1, 1 } };
             var trainingOutputs = NeuralNetWork.MatrixTranspose(new double[,] { { 0, 1, 1, 0 } });
 
-            curNeuralNetwork.Train(trainingInputs, trainingOutputs, 1000000);
+            curNeuralNetwork.Train(trainingInputs, trainingOutputs, 10000);
 
             Console.WriteLine("\nSynaptic weights after training:");
             PrintMatrix(curNeuralNetwork.SynapsesMatrix);
@@ -291,6 +279,8 @@ namespace simple_neural_network
             var output = curNeuralNetwork.Think(new double[,] { { 1, 0, 0 } });
             Console.WriteLine("\nConsidering new problem [1, 0, 0] => :");
             PrintMatrix(output);
+
+            Console.Read();
 
         }
     }
